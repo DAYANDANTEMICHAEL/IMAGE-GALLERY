@@ -1,5 +1,5 @@
 .openPopup {
-    width: 30%; /* Adjusted width as needed */
+    width: 50%; /* Default width */
     height: 90%; /* Adjusted height to fit content */
     padding: 10px;
     background-color: #ffffff;
@@ -13,6 +13,12 @@
     top: 50%; /* Adjust this value to create space at the top */
     left: 50%; /* Center horizontally */
     transform: translate(-50%, -50%); /* Adjust position to truly center */
+}
+
+/* New styles for pages 1 and 2 */
+.page-1 .openPopup,
+.page-2 .openPopup {
+    width: 30%; /* Set width to 30% for pages 1 and 2 */
 }
 
 .pagination {
@@ -45,7 +51,7 @@ h2 {
 }
 
 .image-viewport {
-    height: 100%;
+    height: 95%;
     width: 100%;
     background-color: #ffffff;
 }
@@ -64,6 +70,7 @@ h2 {
     height: 100%; /* Set fixed height */
     overflow: hidden; /* Hide overflow to prevent scrollbars */
     position: relative; /* Ensure proper positioning */
+    background-color: rgb(240, 238, 238);
 }
 
 .view-image-container img {
@@ -79,22 +86,41 @@ h2 {
 }
 
 .edit-image-container {
-    width: 100%; /* Set fixed width */
-    height: 100%; /* Set fixed height */
-    overflow: hidden; /* Hide overflow to prevent scrollbars */
-    position: relative; /* Ensure proper positioning */
+    display: flex; /* Use flexbox for layout */
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
 }
 
-.edit-image-container img {
+.left-image {
+    width: 50%; /* Set width for left column */
+    height: 100%;
+    display: flex; /* Use flexbox for centering */
+    justify-content: flex-start; /* Align items to the start (left) */
+    align-items: center; /* Center vertically */
+    overflow: hidden;
+    background-color: rgb(240, 238, 238);
+}
+
+.left-image img {
+    height: auto; /* Set a specific height */
     width: 100%; /* Make the image fill the container */
-    height: auto; /* Maintain aspect ratio */
     max-height: none; /* Prevent max height restriction */
     object-fit: cover; /* Cover the container while maintaining aspect ratio */
-    position: absolute; /* Position absolutely for centering */
-    top: 50%; /* Center vertically */
-    left: 50%; /* Center horizontally */
-    transform: translate(-50%, -50%) scale(1); /* Ensure initial scale is 1 */
+    position: relative; /* Change to relative positioning */
+    top: 0; /* Reset vertical centering */
+    left: 0; /* Reset horizontal centering */
+    transform: none; /* Remove transform for left alignment */
     transition: transform 0.3s ease; /* Smooth transition for zoom */
+    overflow: hidden;
+}
+
+.right-content {
+    height: 100%;
+    width: 50%; /* Set width for right column */
+    color: #ffffff; /* Text color for better contrast */
+    padding: 20px; /* Add padding for spacing */
+    background-color: transparent;
+    overflow-y: auto; /* Enable vertical scrolling */
 }
 
 .select-button {
@@ -184,4 +210,113 @@ h2 {
 
 .filter-button mat-icon:hover {
     color: #ffffff;
+}
+
+.uploaded-image {
+    max-width: 100%; /* Ensure the image fits within the container */
+    height: auto; /* Maintain aspect ratio */
+}
+
+.adjustment-slider {
+    margin: 15px 0; /* Increased space between sliders */
+    display: flex; /* Flexbox for layout */
+    align-items: center; /* Center align items vertically */
+}
+
+.adjustment-slider label {
+    flex: 0 0 120px; /* Fixed width for labels for consistent alignment */
+    color: #000000; /* Label color */
+    font-weight: bold; /* Make labels bold for emphasis */
+}
+
+.adjustment-slider span {
+    margin-left: 10px; /* Space between slider and value */
+    color: #000000; /* Value color */
+    font-weight: 500; /* Slightly bold for better visibility */
+}
+
+.adjustment-slider input {
+    flex: 1; /* Allow the slider to take available space */
+    margin-left: 10px; /* Space between label and slider */
+    cursor: pointer; /* Pointer cursor on hover */
+}
+
+/* Optional: Add a hover effect for sliders */
+.adjustment-slider input:hover {
+    outline: none; /* Remove default outline */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Subtle shadow on hover */
+}
+
+/* Container for the filters */
+.filter-options {
+    display: grid; /* Use grid layout for better alignment */
+    grid-template-columns: repeat(2, 1fr); /* Change to two equal columns */
+    gap: 25px; /* Space between filter cards */
+    padding: 10px; /* Padding around the grid */
+    margin-top: 10px; /* Space above the filter section */
+}
+
+/* Individual filter card styling */
+.filter-card {
+    width: 200px; /* Set fixed width */
+    height: 200px; /* Set fixed height */
+    border: 1px solid #e0e0e0; /* Light border for separation */
+    border-radius: 10px; /* Rounded corners */
+    text-align: center; /* Center text */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: transform 0.2s, box-shadow 0.2s; /* Smooth transition */
+    display: flex; /* Flexbox for centering content */
+    flex-direction: column; /* Stack content vertically */
+    align-items: center; /* Center align items */
+    justify-content: center; /* Center align items */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    padding: 10px; /* Padding inside the card */
+}
+
+/* Filter name styling */
+.filter-name {
+    font-size: 14px; /* Font size for filter names */
+    color: #333; /* Text color for better contrast */
+    font-weight: bold; /* Make names bold for emphasis */
+}
+
+/* Hover effect for filter cards */
+.filter-card:hover {
+    transform: scale(1.05); /* Slightly enlarge on hover */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
+}
+
+/* Image inside filter card */
+.filter-image {
+    width: 100%; /* Make the image fill the card */
+    height: 100%; /* Ensure the image takes the full height of the card */
+    object-fit: cover; /* Cover the card while maintaining aspect ratio */
+    border-radius: 5px; /* Rounded corners for the image */
+    margin-top: 40px;
+}
+
+/* Adjustments section styling */
+.adjustments {
+    margin: 20px 0; /* Space above and below adjustments */
+    padding: 10px; /* Padding for the adjustments section */
+    background-color: #f9f9f9; /* Light background for contrast */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    max-height: 400px; /* Set a max height for the adjustments section */
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
+/* Button styling */
+.reset-button {
+    background-color: #551919; /* Button color */
+    color: #ffffff; /* Text color */
+    border: none; /* Remove default border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px 15px; /* Padding for the button */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Smooth transition */
+}
+
+.reset-button:hover {
+    background-color: #a72727; /* Darker shade on hover */
 }

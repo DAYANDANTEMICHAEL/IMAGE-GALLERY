@@ -35,15 +35,20 @@ export class DashboardComponent implements OnInit {
         this.loading = true; // Set loading to true when starting to fetch images
         this.http.get<{ id: number, images: string, description: string | null }[]>('http://localhost/IMAGE-GALLERY/backend/dashboard.php') // Update with your actual backend URL
             .subscribe(data => {
-                this.images = data.map(item => ({
-                    id: item.id,
-                    path: `http://localhost/IMAGE-GALLERY/backend/uploads/${item.images}`,
-                    description: item.description
-                })); // Construct full URLs with IDs and descriptions
+                // Check if response is valid
+                if (data && Array.isArray(data)) {
+                    this.images = data.map(item => ({
+                        id: item.id,
+                        path: `http://localhost/IMAGE-GALLERY/backend/uploads/${item.images}`,
+                        description: item.description
+                    })); // Construct full URLs with IDs and descriptions
+                    
+                    // Shuffle the images array to display them randomly
+                    this.images = this.shuffleArray(this.images);
+                } else {
+                    this.images = []; // Fallback to an empty array
+                }
                 
-                // Shuffle the images array to display them randomly
-                this.images = this.shuffleArray(this.images);
-
                 // Set loading to false after 5 seconds
                 //setTimeout(() => {
                  //   this.loading = false; // Automatically set loading to false after 5 seconds

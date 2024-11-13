@@ -1,4 +1,4 @@
-<div class="openPopup">
+<div class="openPopup" [ngStyle]="{'width': currentPage === 1 || currentPage === 2 || currentPage === 4 ? '30%' : '50%'}">
     <!-- ... existing code ... -->
     <div class="pagination">
         <button *ngIf="currentPage > 1" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">Previous</button>
@@ -17,7 +17,6 @@
         </div>
     </div> 
     <div *ngIf="currentPage === 2" class="view-image-container">
-        <button (click)="goToPage(1)" style="margin-bottom: 10px; background-color: white; color: black; border: 1px solid #ccc;">Add More</button>
         <img *ngIf="imageUrl" [src]="imageUrl" alt="Uploaded Image" [ngStyle]="{
             transform: 'scale(' + scale / 100 + ') translate(-50%, -50%)',
             'transform-origin': 'center'
@@ -25,17 +24,59 @@
         <p *ngIf="!imageUrl" style="text-align: center;">No image uploaded.</p>
     </div>
     <div *ngIf="currentPage === 3" class="edit-image-container">
-        <button class="crop-button">
-            <mat-icon>crop</mat-icon>
-        </button>
-        <button class="filter-button">
-            <mat-icon>filter</mat-icon>
-        </button>
-        <img *ngIf="imageUrl" [src]="imageUrl" alt="Uploaded Image">
-        <p *ngIf="!imageUrl" style="text-align: center;">No image uploaded.</p>
+        <div class="left-image">
+            <img *ngIf="imageUrl" [src]="imageUrl" alt="Uploaded Image" class="adjusted-image" [ngStyle]="{
+                'filter': 'brightness(' + (brightness + 100) + '%) contrast(' + (contrast + 100) + '%) saturate(' + (saturation + 100) + '%) sepia(' + (fade / 100) + ') ' + selectedFilter
+            }">
+        </div>
+        <div class="right-content">
+            
+            <h2>Adjustments</h2>
+            <button (click)="resetAdjustments()" style="margin-bottom: 10px; background-color: #581120; color: white; border: 1px solid #ccc;">Reset Adjustments</button> <!-- New Reset Button -->
+            <div class="adjustment-slider">
+                <label>Brightness</label>
+                <input type="range" [(ngModel)]="brightness" min="-100" max="100" (input)="applyAdjustments()" />
+                <span>{{ brightness }}</span>
+            </div>
+            <div class="adjustment-slider">
+                <label>Contrast</label>
+                <input type="range" [(ngModel)]="contrast" min="-100" max="100" (input)="applyAdjustments()" />
+                <span>{{ contrast }}</span>
+            </div>
+            <div class="adjustment-slider">
+                <label>Fade</label>
+                <input type="range" [(ngModel)]="fade" min="0" max="100" (input)="applyAdjustments()" />
+                <span>{{ fade }}</span>
+            </div>
+            <div class="adjustment-slider">
+                <label>Saturation</label>
+                <input type="range" [(ngModel)]="saturation" min="-100" max="100" (input)="applyAdjustments()" />
+                <span>{{ saturation }}</span>
+            </div>
+            <div class="adjustment-slider">
+                <label>Temperature</label>
+                <input type="range" [(ngModel)]="temperature" min="-100" max="100" (input)="applyAdjustments()" />
+                <span>{{ temperature }}</span>
+            </div>
+            <div class="adjustment-slider">
+                <label>Vignette</label>
+                <input type="range" [(ngModel)]="vignette" min="0" max="100" (input)="applyAdjustments()" />
+                <span>{{ vignette }}</span>
+            </div>
+            <h2>Filters</h2>
+            <div class="filter-options">
+                <div *ngFor="let filter of filters" class="filter-card" (click)="applyFilter(filter)">
+                    <img [src]="imageUrl" alt="Filter Preview" [ngStyle]="{ 'filter': filter }" class="filter-image">
+                    <p class="filter-name">{{ filterNames[filter] }}</p>
+                </div>
+                
+            </div>
+        </div>
     </div>
     <div *ngIf="currentPage === 4" class="view-image-container">
-        <img *ngIf="imageUrl" [src]="imageUrl" alt="Uploaded Image">
+        <img *ngIf="imageUrl" [src]="imageUrl" alt="Uploaded Image" [ngStyle]="{
+            'filter': 'brightness(' + (brightness + 100) + '%) contrast(' + (contrast + 100) + '%) saturate(' + (saturation + 100) + '%) sepia(' + (fade / 100) + ') ' + selectedFilter
+        }">
         <div style="display: flex; align-items: center; width: 100%; padding: 10px; position: relative; z-index: 1;">
             <input type="text" class="description" placeholder="Enter description here" 
                    style="flex: 1; margin-right: 8px; padding-right: 30px;" 
@@ -46,4 +87,5 @@
     </div>
     </div> 
     <!-- Display the current page title -->
+
 </div>

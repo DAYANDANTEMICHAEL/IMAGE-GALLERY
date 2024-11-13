@@ -108,3 +108,47 @@
     color: rgb(0, 0, 0);
 }
 
+/* Add styles for the confirmation modal */
+.confirmation-modal {
+    position: fixed; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%); 
+    background: white; 
+    color: black;
+    padding: 20px; 
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3); 
+    z-index: 1000; 
+    border-radius: 8px; /* Rounded corners for a softer look */
+    width: 300px; /* Fixed width for consistency */
+    text-align: center; /* Center text */
+}
+
+.confirmation-modal p {
+    font-size: 16px; /* Slightly larger font for readability */
+    margin-bottom: 20px; /* Space below the text */
+}
+
+.confirmation-modal button {
+    background-color: #007bff; /* Primary button color */
+    color: white; /* Text color */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px 15px; /* Padding for button */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
+    margin: 0 5px; /* Space between buttons */
+}
+
+.confirmation-modal button:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+}
+
+.confirmation-modal button:last-child {
+    background-color: #dc3545; /* Danger button color for 'No' */
+}
+
+.confirmation-modal button:last-child:hover {
+    background-color: #c82333; /* Darker shade on hover for 'No' */
+}
+

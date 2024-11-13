@@ -14,23 +14,45 @@ import { fromEvent } from 'rxjs';
   styleUrls: ['./popup.component.css']
 })
 export class PopupComponent implements AfterViewInit {
-    currentPage: number = 1; // Initialize current page
-    hovered: boolean = false; // Declare the hovered property
-    imageUrl: string | null = null; // Declare imageUrl property
-    showEmojiPicker: boolean = false; // {{ edit_1 }}
-    selectedEmoji: string = ''; // {{ edit_1 }}
-    showIcon: boolean = true; // {{ edit_1 }}
+    currentPage: number = 1;
+    hovered: boolean = false; 
+    imageUrl: string | null = null; 
+    showEmojiPicker: boolean = false; 
+    selectedEmoji: string = ''; 
+    showIcon: boolean = true; 
     description: string = '';
-    currentUserId: string = ''; // Declare currentUserId property with initializer
-    email: string = ''; // Declare email property with initializer
-    avatar: string | null = null; // Declare avatar property with initializer
-    scale: number = 100; // Initial scale
-    top: number = 0; // Initial top position
-    left: number = 0; // Initial left position
-    imageWidth: number = 0; // Width of the image
-    imageHeight: number = 0; // Height of the image
+    currentUserId: string = ''; 
+    email: string = ''; 
+    avatar: string | null = null; 
+    scale: number = 100; 
+    top: number = 0; 
+    left: number = 0; 
+    imageWidth: number = 0; 
+    imageHeight: number = 0; 
+    brightness: number = 0; // Initialize brightness
+    contrast: number = 0; // Initialize contrast
+    fade: number = 0; // Initialize fade
+    saturation: number = 0; // Initialize saturation
+    temperature: number = 0; // Initialize temperature
+    vignette: number = 0; // Initialize vignette
+    selectedFilter: string = '';
+    filters: string[] = [
+        'none',
+        'brightness(1.2)',
+        'contrast(1.2)',
+        'saturate(1.2)',
+        // Add more filters as needed
+    ];
+    filterNames: { [key: string]: string } = {
+        'none': 'Original',
+        'brightness(1.2)': 'Bright',
+        'contrast(1.2)': 'High Contrast',
+        'saturate(1.2)': 'Vivid',
+        // Add more filter names as needed
+    };
+    showDeleteConfirmation: boolean = false; // Initialize it as false
 
-    constructor(private dialogRef: MatDialogRef<PopupComponent>) { // {{ edit_1 }}
+    constructor(private dialogRef: MatDialogRef<PopupComponent>) {
         this.currentUserId = ''; // Initialize in constructor
         this.email = ''; // Initialize in constructor
     }
@@ -74,49 +96,76 @@ export class PopupComponent implements AfterViewInit {
             return; // Prevent upload if no user ID
         }
 
-        const uploadData = {
-            user_id: userId, // Use the retrieved user ID
-            email: email, // Use the retrieved email
-            image: this.imageUrl,
-            description: this.description,
-            date: new Date().toISOString()
+        // Create a canvas to draw the filtered image
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        img.src = this.imageUrl || ''; // Use the original image URL or fallback to an empty string
+
+        img.onload = () => {
+            canvas.width = img.width; // Set canvas width to the original image width
+            canvas.height = img.height; // Set canvas height to the original image height
+            
+            // Draw the original image on the canvas
+            ctx?.drawImage(img, 0, 0);
+
+            // Apply filters
+            ctx!.filter = `
+                brightness(${this.brightness + 100}%) 
+                contrast(${this.contrast + 100}%) 
+                saturate(${this.saturation + 100}%) 
+                sepia(${this.fade / 100}) 
+                hue-rotate(${this.temperature}deg) 
+                drop-shadow(0 0 ${this.vignette}px black)
+            `;
+            ctx?.drawImage(img, 0, 0); // Redraw the image with filters applied
+
+            const filteredImageUrl = canvas.toDataURL(); // Get the filtered image as a data URL
+
+            const uploadData = {
+                user_id: userId, // Use the retrieved user ID
+                email: email, // Use the retrieved email
+                image: filteredImageUrl, // Use the filtered image URL
+                description: this.description,
+                date: new Date().toISOString()
+            };
+
+            console.log('Upload Data:', uploadData); // Log the data being sent
+
+            // Check if filteredImageUrl is valid
+            if (!filteredImageUrl) {
+                console.error('No filtered image URL available for upload.');
+                return; // Prevent upload if no image
+            }
+
+            fetch('http://localhost/IMAGE-GALLERY/backend/upload.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(uploadData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(`HTTP error! Status: ${response.status}, Response: ${text}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    console.log(data.success);
+                    this.dialogRef.close(); // Close the popup on successful upload
+                    location.reload(); // Reload the page after closing the popup
+                } else {
+                    console.error(data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
         };
-
-        console.log('Upload Data:', uploadData); // Log the data being sent
-
-        // Check if imageUrl is valid
-        if (!this.imageUrl) {
-            console.error('No image URL available for upload.');
-            return; // Prevent upload if no image
-        }
-
-        fetch('http://localhost/IMAGE-GALLERY/backend/upload.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(uploadData)
-        })
-        .then(response => {
-            if (!response.ok) {
-                return response.text().then(text => {
-                    throw new Error(`HTTP error! Status: ${response.status}, Response: ${text}`);
-                });
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                console.log(data.success);
-                this.dialogRef.close(); // Close the popup on successful upload
-                location.reload(); // Reload the page after closing the popup
-            } else {
-                console.error(data.error);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
     }
 
     onFileSelect(event: Event): void {
@@ -208,5 +257,35 @@ export class PopupComponent implements AfterViewInit {
         if (files && files.length > 0) {
             this.onFileSelect({ target: { files } } as unknown as Event); // Call onFileSelect with the dropped files
         }
+    }
+
+    applyAdjustments(): void { // {{ edit_1 }}
+        // Logic to apply adjustments to the image
+        // This could involve manipulating the canvas or image styles
+        const imageElement = document.querySelector('img'); // Select the image element
+        if (imageElement) {
+            imageElement.style.filter = `
+                brightness(${this.brightness + 100}%) 
+                contrast(${this.contrast + 100}%) 
+                saturate(${this.saturation + 100}%) 
+                sepia(${this.fade / 100}) 
+                hue-rotate(${this.temperature}deg) 
+                drop-shadow(0 0 ${this.vignette}px black)
+            `;
+        }
+    }
+
+    resetAdjustments(): void { // {{ edit_1 }}
+        this.brightness = 0; // Reset brightness
+        this.contrast = 0; // Reset contrast
+        this.fade = 0; // Reset fade
+        this.saturation = 0; // Reset saturation
+        this.temperature = 0; // Reset temperature
+        this.vignette = 0; // Reset vignette
+        this.applyAdjustments(); // Apply the reset adjustments
+    }
+
+    applyFilter(filter: string) {
+        this.selectedFilter = filter;
     }
 }

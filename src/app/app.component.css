@@ -2,7 +2,7 @@
     height: 100vh; /* Make the container fill the viewport height */
     display: flex; /* Ensure it behaves as a flex container */
     flex-direction: column; /* Ensure the top nav is on top */
-    background-color: #ffffff;
+    background-color: #eceaea;
   }
   
   mat-drawer {

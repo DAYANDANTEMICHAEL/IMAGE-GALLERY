@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -75,6 +75,8 @@ export class PopupShowComponent implements OnInit {
     cards: { imagePath: string; id: number; description: string; date: string }[] = []; // Add this line to declare the cards property
     comment: string = ''; // Add this line to declare the comment property
     userIdOfSelectedImage!: number; // New property to store user ID of the selected image
+    showDeleteConfirmation: boolean = false; // Add this line to declare the property
+    @ViewChild('commentInput') commentInput!: ElementRef; // Import ElementRef
 
     constructor(private http: HttpClient, private cdr: ChangeDetectorRef, private location: Location) {}
 
@@ -394,6 +396,10 @@ export class PopupShowComponent implements OnInit {
 
     reloadPage() {
         window.location.href = '/dashboard'; // Redirect to the dashboard
+    }
+
+    openCommentSection() {
+        this.commentInput.nativeElement.focus(); // Focus on the comment input
     }
 
 }

@@ -1,8 +1,5 @@
-<div class="dashboard-container" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+<div class="dashboard-container">
   <div *ngIf="loading" class="reload-icon" style="position: absolute; left: 50%; transform: translate(-50%, -50%); z-index: 1000; display: flex; justify-content: center; align-items: center;">
-  </div>
-  <div *ngIf="images.length === 0" class="no-images-message" style="text-align: center; font-size: 30px; color: #000000; margin: 20px 0;">
-    No uploaded photos yet
   </div>
   <div *ngFor="let image of images" class="card" (click)="openPopup(image.path, image.id, image.description || ''); updateUrl(image.id.toString())">
     <div class="content" style="width: 100%; height: 100%;">

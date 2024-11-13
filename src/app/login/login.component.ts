@@ -1,9 +1,11 @@
+// login.component.ts
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { HttpClient } from '@angular/common/http';
+import { AuthGuard } from '../guards/auth.guard';
 
 @Component({
   selector: 'app-login',
@@ -16,11 +18,10 @@ export class LoginComponent {
   loginForm: FormGroup;
   errorMessage: string | null = null;
 
-  constructor(private fb: FormBuilder, private http: HttpClient, private router: Router) {
-    // Initialize the loginForm with the required controls
+  constructor(private fb: FormBuilder, private http: HttpClient, private router: Router, private authGuard: AuthGuard) {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]], // Add email control
-      password: ['', [Validators.required, Validators.minLength(6)]] // Add password control
+      email: ['', [Validators.required, Validators.email]], 
+      password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
@@ -32,23 +33,22 @@ export class LoginComponent {
     this.errorMessage = null;
     this.http.post('http://localhost/IMAGE-GALLERY/backend/login.php', this.loginForm.value, { responseType: 'text' })
     .subscribe((response: any) => {
-       console.log(response);
-       try {
-          const jsonResponse = JSON.parse(response);
-          if (jsonResponse.success) {
-             localStorage.setItem('userId', jsonResponse.userId); // Store user ID in local storage
-             localStorage.setItem('email', this.loginForm.value.email); // Store email in local storage
-             this.router.navigate(['/dashboard']);
-          } else {
-             this.errorMessage = jsonResponse.error;
-          }
-       } catch (e) {
-          console.error("Invalid JSON response:", response);
-          this.errorMessage = "Server returned an invalid response. Please check server logs.";
-       }
+        try {
+            const jsonResponse = JSON.parse(response);
+            if (jsonResponse.success) {
+                localStorage.setItem('userId', jsonResponse.userId);
+                localStorage.setItem('email', this.loginForm.value.email);
+                localStorage.setItem('authToken', jsonResponse.token);
+                console.log("Navigating to dashboard...");
+                this.router.navigate(['/dashboard']);
+            } else {
+                this.errorMessage = jsonResponse.error;
+            }
+        } catch (e) {
+            this.errorMessage = "Server returned an invalid response. Please check server logs.";
+        }
     }, error => {
-       console.error('Error:', error);
-       this.errorMessage = error.error ? error.error : 'Login failed. Please try again later.';
+        this.errorMessage = error.error ? error.error : 'Login failed. Please try again later.';
     });
   }
 }
